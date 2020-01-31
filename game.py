@@ -3,7 +3,7 @@ import resources as rs
 
 import itertools
 import time
-import numpy as np
+import math
 
 DISPLAY_WINDOW_X , DISPLAY_WINDOW_Y = (500,500)
 DISPLAY_WINDOW = (DISPLAY_WINDOW_X,DISPLAY_WINDOW_Y)
@@ -13,18 +13,11 @@ BLACK = (0,0,0)
 class Background:
 	def __init__(self,screen):
 		self.screen = screen
-		self.img    = rs.ground
+		self.img    = rs.grass
 
 		#Calucalte minimum buffer surface size
-		def gcd(a,b): 
-			if a == 0: 
-				return b 
-			return gcd(b % a, a)
-		def lcm(a,b): 
-			return (a*b) / gcd(a,b) 
-  
-		self.surface_w = int(lcm(screen.get_width()*2,self.img.get_width()))
-		self.surface_h = int(lcm(screen.get_height()*2,self.img.get_height()))
+		self.surface_w = int(math.ceil(screen.get_width()*2/self.img.get_width()))*self.img.get_width()
+		self.surface_h = int(math.ceil(screen.get_height()*2/self.img.get_height()))*self.img.get_height()
 
 		#Creating a new surface with tiled screen for smooth movement between co-ordinates
 		self.surface = pygame.Surface((self.surface_w, self.surface_h))
@@ -83,21 +76,29 @@ def main():
 	while running:
 		# All keys pressed, is a dictonary of bools of all keys
 		key=pygame.key.get_pressed()
+		# Key Updates
+		if key[pygame.K_w] == 1:
+			update_background_y = -1
+		elif key[pygame.K_s] == 1:
+			update_background_y = 1
+		else:
+			update_background_y = 0
+
+		if key[pygame.K_d] == 1:
+			update_background_x = 1
+		elif key[pygame.K_a] == 1:
+			update_background_x = -1
+		else:
+			update_background_x = 0
 		
-		# All Events
+		# All Event handling
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				running = False
-			if key[pygame.K_w] == 1:
-				update_background_y = -1
-			if key[pygame.K_s] == 1:
-				update_background_y = 1
-			if key[pygame.K_d] == 1:
-				update_background_x = 1
-			if key[pygame.K_a] == 1:
-				update_background_x = -1
 
-		print(key[pygame.K_w],key[pygame.K_s],key[pygame.K_a],key[pygame.K_d],update_background_x,update_background_y)
+		#Debug prints
+		#print(key[pygame.K_w],key[pygame.K_s],key[pygame.K_a],key[pygame.K_d],update_background_x,update_background_y)
+		#print(bg.curr_X,bg.curr_Y,bg.surface_w,bg.surface_h)
 
 		# All Draws
 		bg.draw_background(update_background_x,update_background_y)
