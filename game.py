@@ -16,6 +16,8 @@ class Background:
 		self.img    = rs.grass
 
 		#Calucalte minimum buffer surface size
+		if self.img.get_width() > screen.get_width() or self.img.get_height() > screen.get_height():
+			raise Exception('Check your sprite size, it shouldnt exceed screen shapes')
 		self.surface_w = int(math.ceil(screen.get_width()*2/self.img.get_width()))*self.img.get_width()
 		self.surface_h = int(math.ceil(screen.get_height()*2/self.img.get_height()))*self.img.get_height()
 
@@ -34,18 +36,36 @@ class Background:
 
 		print('Bg W:',self.surface_w,'Bg H:',self.surface_h)
 
-	def draw_background(self,a=0,b=0):
+	def draw(self,a=0,b=0):
 
 		#Update of the surface co-ords
 		self.curr_X = (self.curr_X + a) % (self.surface_w // 2)
 		self.curr_Y = (self.curr_Y + b) % (self.surface_h // 2)
 
-		# Basic fill
+		# Basic fill, Not required if confident that will not loose the surface.
 		self.screen.fill(BLACK)
 		
 		# Cropped image from surface
 		self.screen.blit(self.surface,(0,0),(self.curr_X,self.curr_Y,self.screen.get_width(),self.screen.get_height()))
-		
+
+class Player(pygame.sprite.Sprite):
+	def __init__(self,screen):
+		pygame.sprite.Sprite.__init__(self)
+
+		self.screen = screen
+		self.img    = rs.player['animation']
+
+		self.curr = 0
+		self.prev_key = 'up'
+
+	def draw(self, key):
+		if key == None:
+			self.curr = 0
+			key = self.prev_key
+		self.curr = (self.curr + 1) % len(self.img[key])
+		self.screen.blit(self.img[key][self.curr],(self.screen.get_width()//2-self.img[key][self.curr].get_width()//2,self.screen.get_height()//2-self.img[key][self.curr].get_height()//2))
+		self.prev_key = key
+		#print(self.curr)
 
 def main():
 
@@ -63,9 +83,14 @@ def main():
 
 	#Background Init
 	bg = Background(screen)
-	bg.draw_background(0,0)
+	bg.draw(0,0)
 	update_background_x = 0
 	update_background_y = 0
+
+	#Player Init
+	p = Player(screen)
+	p_facing = 'up'
+	p.draw(p_facing)
 
 	# Loop Init
 	running = True
@@ -77,19 +102,26 @@ def main():
 		# All keys pressed, is a dictonary of bools of all keys
 		key=pygame.key.get_pressed()
 		# Key Updates
-		if key[pygame.K_w] == 1:
+		if key[pygame.K_UP] == 1:
 			update_background_y = -1
-		elif key[pygame.K_s] == 1:
+			p_facing = 'up'
+		elif key[pygame.K_DOWN] == 1:
 			update_background_y = 1
+			p_facing = 'down'
 		else:
 			update_background_y = 0
 
-		if key[pygame.K_d] == 1:
+		if key[pygame.K_RIGHT] == 1:
 			update_background_x = 1
-		elif key[pygame.K_a] == 1:
+			p_facing = 'right'
+		elif key[pygame.K_LEFT] == 1:
 			update_background_x = -1
+			p_facing = 'left'
 		else:
 			update_background_x = 0
+
+		if key[pygame.K_UP] != 1 and key[pygame.K_DOWN] != 1 and key[pygame.K_RIGHT] != 1 and key[pygame.K_LEFT] != 1 :
+			p_facing = None
 		
 		# All Event handling
 		for event in pygame.event.get():
@@ -101,7 +133,8 @@ def main():
 		#print(bg.curr_X,bg.curr_Y,bg.surface_w,bg.surface_h)
 
 		# All Draws
-		bg.draw_background(update_background_x,update_background_y)
+		bg.draw(update_background_x,update_background_y)
+		p.draw(p_facing)
 
 		# For all the Draw operations 1 flip for frame
 		pygame.display.flip()
