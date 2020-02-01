@@ -14,12 +14,15 @@ _grass = DIR+'/grass.jpg'
 grass = pygame.image.load(_grass)
 grass = pygame.transform.scale(grass,(DISPLAY_WINDOW_X,DISPLAY_WINDOW_Y))
 
+'''
+\\Player Loading\\
+'''
 _player_sprite = DIR+'/player_sprite.png'
 player_sprite  = pygame.image.load(_player_sprite)
 #player_sprite = pygame.transform.scale(player_sprite,(DISPLAY_WINDOW_X,DISPLAY_WINDOW_Y))
 player_sprite_w = player_sprite.get_width()
-player_sprite_w_animations = 12
 player_sprite_h = player_sprite.get_height()
+player_sprite_w_animations = 12
 player_sprite_h_animations = 4
 player = {
 	'animation' : {
@@ -42,12 +45,23 @@ for key in player['animation']:
 		raise Exception('Failed to load player sprite')
 	for i in range(len(player['animation'][key])):
 		player['animation'][key][i].blit(player_sprite,(0,0),(i*(player_sprite_w//player_sprite_w_animations),
-															 j*(player_sprite_h//player_sprite_h_animations),
-															 player['animation'][key][i].get_width(),
-															 player['animation'][key][i].get_height()))
+															  j*(player_sprite_h//player_sprite_h_animations),
+															  player['animation'][key][i].get_width(),
+															  player['animation'][key][i].get_height()))
+		#Key out all the black
 		player['animation'][key][i].set_colorkey((0,0,0))
 '''
-Generate resources
+//Player Loading//
 '''
-# Generate default Ground Sprite
-##import cv2
+
+# Loading Pokemon
+pokemon_count = 151
+_pokemon = DIR+'/pokemon/red-blue/'
+pokemon = {}
+for i in range(pokemon_count):
+	file_name = _pokemon+str(i+1)+'.png'
+	#print(file_name)
+	pokemon[i] = pygame.image.load(file_name)
+	#Key out all the white
+	pokemon[i].set_colorkey((255,255,255))
+	#pokemon[i] = pygame.transform.scale(pokemon[i],(DISPLAY_WINDOW_X,DISPLAY_WINDOW_Y))
