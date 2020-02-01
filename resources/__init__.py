@@ -1,7 +1,7 @@
 import pygame
 import os
 
-DISPLAY_WINDOW_X , DISPLAY_WINDOW_Y = (500,500)
+DISPLAY_WINDOW_X , DISPLAY_WINDOW_Y = (1000,700)
 DISPLAY_WINDOW = (DISPLAY_WINDOW_X,DISPLAY_WINDOW_Y)
 
 DIR = os.path.dirname(os.path.realpath(__file__))
@@ -12,7 +12,7 @@ ground = pygame.image.load(_ground)
 
 _grass = DIR+'/grass.jpg'
 grass = pygame.image.load(_grass)
-grass = pygame.transform.scale(grass,(DISPLAY_WINDOW_X,DISPLAY_WINDOW_Y))
+grass = pygame.transform.scale(grass,(DISPLAY_WINDOW_X//10,DISPLAY_WINDOW_Y//10))
 
 '''
 \\Player Loading\\

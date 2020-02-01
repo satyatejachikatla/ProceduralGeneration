@@ -6,7 +6,7 @@ import time
 import math
 import random
 
-DISPLAY_WINDOW_X , DISPLAY_WINDOW_Y = (500,500)
+DISPLAY_WINDOW_X , DISPLAY_WINDOW_Y = (1000,700)
 DISPLAY_WINDOW = (DISPLAY_WINDOW_X,DISPLAY_WINDOW_Y)
 
 BLACK = (0,0,0)
@@ -144,6 +144,17 @@ class Pokemon:
 				return True
 		return False
 
+class HUD:
+	def __init__(self,bg):
+		self.bg = bg
+
+	def draw(self):
+		pygame.draw.rect(self.bg.screen, (0 , 0 , 0), (0, 0, self.bg.screen.get_width(), self.bg.screen.get_height()), 56*2)
+		pygame.draw.line(self.bg.screen, (255,0 , 0), (0,0) , (56,56) , 2)
+		pygame.draw.line(self.bg.screen, (255,0 , 0), (self.bg.screen.get_width(),0) , (self.bg.screen.get_width()-56,56) , 2)
+		pygame.draw.line(self.bg.screen, (255,0 , 0), (0,self.bg.screen.get_height()) , (56,self.bg.screen.get_height()-56) , 2)
+		pygame.draw.line(self.bg.screen, (255,0 , 0), (self.bg.screen.get_width(),self.bg.screen.get_height()) , (self.bg.screen.get_width()-56,self.bg.screen.get_height()-56) , 2)
+
 def main():
 
 	#Game init
@@ -168,6 +179,10 @@ def main():
 	p = Player(screen)
 	p_facing = 'up'
 	p.draw(p_facing)
+
+	#Hud
+	hud = HUD(bg)
+	hud.draw()
 
 	#Creating pokemon
 	pokimon_list = {}
@@ -233,11 +248,13 @@ def main():
 		1. Background
 		2. All pokemons
 		3. Player
+		4. HUD
 		'''
 		bg.draw(update_background_x,update_background_y)
 		for chunk in pokimon_list:
 			pokimon_list[chunk].draw()
 		p.draw(p_facing)
+		hud.draw()
 
 
 		# For all the Draw operations 1 flip for frame
